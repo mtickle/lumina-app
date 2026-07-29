@@ -33,7 +33,7 @@ const MOCK_FEED = [
       hookText: "The Prince who became a Shepherd to save a Nation.",
       // Using a placeholder image evocative of Moses/desert
       imageUrl:
-        "https://images.unsplash.com/photo-1544822688-c5f41d2c1f71?auto=format&fit=crop&q=80&w=800&h=1200",
+        "https://upload.wikimedia.org/wikipedia/commons/4/4a/Rembrandt_Harmensz._van_Rijn_079.jpg",
       deepDive: "Read full biography",
     },
   },
@@ -45,7 +45,7 @@ const MOCK_FEED = [
     payload: {
       // Placeholder for a map/ancient city vibe
       mapImageUrl:
-        "https://images.unsplash.com/photo-1548625361-ec857ec66567?auto=format&fit=crop&q=80&w=800&h=1200",
+        "https://www.seetheholyland.net/wp-content/uploads/Temple-Mount2.jpg",
       locationName: "The Temple Mount",
       description:
         "The religious and social epicenter of the Jewish world during the time of Christ.",
