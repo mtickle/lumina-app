@@ -18,17 +18,18 @@ const supabaseAnonKey =
   import.meta.env?.VITE_SUPABASE_ANON_KEY || "YOUR_SUPABASE_ANON_KEY";
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// --- HELPER: Unsplash Image Generator ---
-// source.unsplash.com is deprecated. We use this fallback to generate valid image URLs based on keywords.
+// --- HELPER: Image Generator Fallback ---
+// Unsplash Source is dead. Using Picsum Seed as a reliable frontend fallback
+// until we wire the real Unsplash API into the Node.js backend.
 const getImageUrl = (keyword) => {
-  if (!keyword)
-    return "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=800&h=1200";
-  // A small hash to ensure we get a random but consistent image per keyword
-  const hash = Array.from(keyword).reduce(
-    (s, c) => (Math.imul(31, s) + c.charCodeAt(0)) | 0,
-    0
-  );
-  return `https://images.unsplash.com/photo-1544822688-c5f41d2c1f71?auto=format&fit=crop&q=80&w=800&h=1200&sig=${hash}`;
+  if (!keyword) return "https://picsum.photos/seed/lumina/800/1200";
+  return `https://picsum.photos/seed/${encodeURIComponent(keyword)}/800/1200`;
+};
+
+// Helper to bypass broken Unsplash URLs currently saved in the Supabase DB
+const resolveImage = (savedUrl, keyword) => {
+  if (savedUrl && !savedUrl.includes("source.unsplash.com")) return savedUrl;
+  return getImageUrl(keyword);
 };
 
 // --- HELPER: Fisher-Yates Shuffle ---
@@ -62,7 +63,7 @@ const VerseContent = ({ payload }) => (
 const PersonContent = ({ payload, onOpenDeepDive }) => (
   <div className="w-full h-full relative bg-zinc-900">
     <img
-      src={payload.imageUrl || getImageUrl(payload.imageKeyword || "desert")}
+      src={resolveImage(payload.imageUrl, payload.imageKeyword || "desert")}
       alt="Person"
       className="absolute inset-0 w-full h-full object-cover opacity-80"
     />
@@ -86,7 +87,7 @@ const PersonContent = ({ payload, onOpenDeepDive }) => (
 const PlaceContent = ({ payload, onOpenDeepDive }) => (
   <div className="w-full h-full relative bg-amber-900/40">
     <img
-      src={payload.mapImageUrl || getImageUrl(payload.imageKeyword || "ruins")}
+      src={resolveImage(payload.mapImageUrl, payload.imageKeyword || "ruins")}
       alt="Map"
       className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-overlay"
     />
@@ -114,7 +115,7 @@ const PlaceContent = ({ payload, onOpenDeepDive }) => (
 const InspirationalContent = ({ payload, onOpenDeepDive }) => (
   <div className="w-full h-full relative flex items-center justify-center p-8">
     <img
-      src={payload.bgUrl || getImageUrl("peace")}
+      src={resolveImage(payload.bgUrl, "peace")}
       alt="Inspiring background"
       className="absolute inset-0 w-full h-full object-cover opacity-90"
     />
@@ -179,7 +180,7 @@ const DevotionalContent = ({ payload }) => (
   </div>
 );
 
-// 2. The Feed Card
+// 3. The Feed Card
 const FeedCard = ({ data, onOpenDrawer }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
@@ -230,7 +231,7 @@ const FeedCard = ({ data, onOpenDrawer }) => {
   };
 
   return (
-    <div className="relative h-[100dvh] w-full snap-center snap-always overflow-hidden bg-black flex-shrink-0">
+    <div className="relative h-full w-full flex-none snap-start snap-always overflow-hidden bg-black">
       <div className="absolute inset-0 z-0">{renderContent()}</div>
       <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/90 via-black/10 to-transparent pointer-events-none" />
 
@@ -452,13 +453,13 @@ export default function App() {
           )}
         </div>
 
-        {/* Scroll Container */}
+        {/* Scroll Container - STRICT ENFORCEMENT */}
         <div
-          className="h-[100dvh] w-full overflow-y-scroll overflow-x-hidden snap-y snap-mandatory scroll-smooth hide-scrollbar relative"
+          className="absolute inset-0 overflow-y-auto overflow-x-hidden snap-y snap-mandatory scroll-smooth hide-scrollbar flex flex-col"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {error ? (
-            <div className="h-full flex items-center justify-center p-8 text-center text-zinc-400">
+            <div className="h-full w-full flex items-center justify-center p-8 text-center text-zinc-400">
               {error}
             </div>
           ) : (
@@ -472,8 +473,9 @@ export default function App() {
           )}
 
           {!loading && feed.length > 0 && (
-            <div className="h-32 w-full snap-center flex items-center justify-center text-zinc-500 text-sm pb-8">
-              You've reached the end for now.
+            <div className="h-full w-full flex-none snap-start snap-always flex flex-col items-center justify-center text-zinc-500 text-sm pb-8 bg-zinc-950">
+              <CheckCircle2 size={48} className="mb-4 text-zinc-800" />
+              <p>You've reached the end for now.</p>
             </div>
           )}
         </div>
