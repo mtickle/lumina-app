@@ -21,8 +21,9 @@ const resolveImage = (savedUrl, keyword) => {
  * @param {string} props.payload.quote - The inspirational quote text.
  * @param {boolean} props.payload.hasDeepDive - Whether there is a reflection to read.
  * @param {Function} props.onOpenDeepDive - Callback to open the deep dive drawer.
+ * @param {string} props.textSizeClass - The class for dynamically setting the text size.
  */
-const InspirationalContent = ({ payload, onOpenDeepDive }) => {
+const InspirationalContent = ({ payload, onOpenDeepDive, textSizeClass }) => {
     return (
         <div className="w-full h-full relative flex items-center justify-center p-8">
             {/* Background Image */}
@@ -38,7 +39,7 @@ const InspirationalContent = ({ payload, onOpenDeepDive }) => {
             {/* Foreground Content */}
             <div className="relative z-10 flex flex-col items-center text-center">
                 <Quote className="text-white/50 mb-6" size={48} />
-                <h1 className="text-white text-4xl font-serif italic leading-relaxed drop-shadow-2xl">
+                <h1 className={`text-white ${textSizeClass} font-serif italic leading-relaxed drop-shadow-2xl`}>
                     {payload?.quote || 'Quote unavailable.'}
                 </h1>
 

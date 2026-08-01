@@ -41,10 +41,10 @@ const PersonContent = ({ payload, onOpenDeepDive }) => {
             <div className="absolute inset-0 bg-black/40" />
 
             {/* Foreground Content */}
-            <div className="absolute bottom-32 left-6 right-20 z-0">
-                <h2 className="text-white text-3xl font-bold leading-snug drop-shadow-lg">
+            <div className="absolute bottom-52 left-6 right-20 z-0">
+                <h3 className="text-white text-3xl font-bold leading-snug drop-shadow-lg">
                     {payload?.hookText || 'Biography unavailable.'}
-                </h2>
+                </h3>
 
                 {/* Conditional Deep Dive Button */}
                 {payload?.hasDeepDive && (

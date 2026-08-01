@@ -71,13 +71,19 @@ const DeepDiveDrawer = ({ isOpen, onClose, activeCard }) => {
                 {/* Drag Handle & Header */}
                 <div className="flex flex-col items-center p-4 border-b border-white/10 shrink-0">
                     <div className="w-12 h-1.5 bg-white/20 rounded-full mb-4" />
-                    <div className="flex w-full justify-between items-center">
-                        <h2 className="text-white font-bold text-xl truncate pr-4">
+
+                    {/* UPDATED: flex container uses items-start and gap-4 */}
+                    <div className="flex w-full justify-between items-start gap-4">
+
+                        {/* UPDATED: removed truncate, added leading-tight */}
+                        <h2 className="text-white font-bold text-xl leading-tight">
                             {activeCard?.metadata_anchor}
                         </h2>
+
+                        {/* UPDATED: added flex-shrink-0 */}
                         <button
                             onClick={onClose}
-                            className="p-2 bg-white/10 rounded-full text-white/70 hover:bg-white/20 transition-colors"
+                            className="flex-shrink-0 p-2 bg-white/10 rounded-full text-white/70 hover:bg-white/20 transition-colors"
                             aria-label="Close"
                         >
                             <X size={20} />
