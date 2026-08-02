@@ -5,6 +5,7 @@ import { CheckCircle2 } from "lucide-react";
 // Import our modularized components
 import FeedCard from "./components/FeedCard";
 import DeepDiveDrawer from "./components/DeepDiveDrawer";
+import FeedFilter from "./components/FeedFilter";
 
 // Safely load environment variables
 const supabaseUrl = import.meta.env?.VITE_SUPABASE_URL || "YOUR_SUPABASE_URL";
@@ -96,12 +97,15 @@ export default function App() {
           ) : (
             <div className="w-2 h-2 rounded-full bg-white/50 animate-pulse" />
           )}
+
         </div>
+
 
         {/* 
           Scroll Container 
           flex-1 allows it to take up the remaining height perfectly
         */}
+
         <div
           className="flex-1 w-full overflow-y-auto overflow-x-hidden snap-y snap-mandatory scroll-smooth hide-scrollbar flex flex-col"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}

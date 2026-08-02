@@ -92,10 +92,10 @@ const FeedCard = ({ data, onOpenDrawer }) => {
 
                     {/* Metadata Anchor (Bottom Left) */}
                     <div className="flex-1 pr-16 mb-4">
-                        <h3 className="text-white/70 text-xs font-bold uppercase tracking-wider mb-1 drop-shadow-md">
+                        <h3 className="text-white/80 text-xs font-bold uppercase tracking-wider mb-1 drop-shadow-lg">
                             {data.card_type}
                         </h3>
-                        <h2 className="text-white text-lg font-medium drop-shadow-md truncate">
+                        <h2 className="text-white text-lg font-medium drop-shadow-lg truncate">
                             {data.metadata_anchor}
                         </h2>
                     </div>
