@@ -4,7 +4,7 @@ import { CheckCircle2 } from "lucide-react";
 
 import FeedCard from "./components/FeedCard";
 import DeepDiveDrawer from "./components/DeepDiveDrawer";
-import FeedFilter from "./components/FeedFilter";
+
 
 const supabaseUrl = import.meta.env?.VITE_SUPABASE_URL || "YOUR_SUPABASE_URL";
 const supabaseAnonKey = import.meta.env?.VITE_SUPABASE_ANON_KEY || "YOUR_SUPABASE_ANON_KEY";
@@ -173,10 +173,7 @@ export default function App() {
           )}
         </div>
 
-        {/* Filter Component */}
-        <div className="absolute top-20 inset-x-0 z-30">
-          <FeedFilter activeFilter={activeFilter} onFilterChange={setActiveFilter} />
-        </div>
+
 
         {/* Scroll Container */}
         <div
