@@ -1,13 +1,14 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
 import { createClient } from "@supabase/supabase-js";
+import { BarChart2, CheckCircle2 } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import StatsModal from "./components/StatsModal";
-import { CheckCircle2, BarChart2 } from "lucide-react";
 
-import FeedCard from "./components/FeedCard";
 import DeepDiveDrawer from "./components/DeepDiveDrawer";
+import FeedCard from "./components/FeedCard";
 
 const supabaseUrl = import.meta.env?.VITE_SUPABASE_URL || "YOUR_SUPABASE_URL";
-const supabaseAnonKey = import.meta.env?.VITE_SUPABASE_ANON_KEY || "YOUR_SUPABASE_ANON_KEY";
+const supabaseAnonKey =
+  import.meta.env?.VITE_SUPABASE_ANON_KEY || "YOUR_SUPABASE_ANON_KEY";
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const shuffleArray = (array) => {
@@ -40,7 +41,8 @@ export default function App() {
   const endRef = useRef(false);
   const observer = useRef(null);
 
-  const hasReachedEnd = feed.length >= masterIndex.length && masterIndex.length > 0;
+  const hasReachedEnd =
+    feed.length >= masterIndex.length && masterIndex.length > 0;
 
   // Keep refs synced for the observer callback
   useEffect(() => {
@@ -54,7 +56,11 @@ export default function App() {
 
     observer.current = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && !fetchingRef.current && !endRef.current) {
+        if (
+          entries[0].isIntersecting &&
+          !fetchingRef.current &&
+          !endRef.current
+        ) {
           setPage((p) => p + 1);
         }
       },
@@ -70,9 +76,9 @@ export default function App() {
     const fetchMasterIndex = async () => {
       try {
         const { data, error } = await supabase
-          .from('feed_cards')
-          .select('id, card_type')
-          .eq('active', true);
+          .from("feed_cards")
+          .select("id, card_type")
+          .eq("active", true);
 
         if (error) throw error;
         setMasterIndex(shuffleArray(data));
@@ -88,11 +94,18 @@ export default function App() {
 
     // Real-time subscription to Pi inserts
     const channel = supabase
-      .channel('public:feed_cards')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'feed_cards' }, (payload) => {
-        setFeed(current => [payload.new, ...current]);
-        setMasterIndex(current => [{ id: payload.new.id, card_type: payload.new.card_type }, ...current]);
-      })
+      .channel("public:feed_cards")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "feed_cards" },
+        (payload) => {
+          setFeed((current) => [payload.new, ...current]);
+          setMasterIndex((current) => [
+            { id: payload.new.id, card_type: payload.new.card_type },
+            ...current,
+          ]);
+        }
+      )
       .subscribe();
 
     return () => supabase.removeChannel(channel);
@@ -104,22 +117,29 @@ export default function App() {
       if (masterIndex.length === 0) return;
 
       const startIndex = page * BATCH_SIZE;
-      const currentBatch = masterIndex.slice(startIndex, startIndex + BATCH_SIZE);
+      const currentBatch = masterIndex.slice(
+        startIndex,
+        startIndex + BATCH_SIZE
+      );
 
       if (currentBatch.length === 0) return;
 
       setFetchingBatch(true);
-      const batchIds = currentBatch.map(c => c.id);
+      const batchIds = currentBatch.map((c) => c.id);
 
       const { data, error } = await supabase
-        .from('feed_cards')
-        .select('*')
-        .in('id', batchIds);
+        .from("feed_cards")
+        .select("*")
+        .in("id", batchIds);
 
       if (data) {
         // Remap to preserve shuffled order
-        const orderedData = batchIds.map(id => data.find(d => d.id === id)).filter(Boolean);
-        setFeed(prev => page === 0 ? orderedData : [...prev, ...orderedData]);
+        const orderedData = batchIds
+          .map((id) => data.find((d) => d.id === id))
+          .filter(Boolean);
+        setFeed((prev) =>
+          page === 0 ? orderedData : [...prev, ...orderedData]
+        );
       }
       setFetchingBatch(false);
     };
@@ -131,10 +151,12 @@ export default function App() {
   return (
     <div className="bg-black w-full h-screen fixed inset-0 font-sans sm:flex sm:justify-center overflow-hidden">
       <div className="w-full h-full max-w-md bg-zinc-950 relative sm:border-x sm:border-zinc-800 shadow-2xl flex flex-col">
-
         {/* Top Nav */}
         <div className="absolute top-0 inset-x-0 z-30 p-6 pointer-events-none flex justify-between items-center bg-gradient-to-b from-black/60 to-transparent">
-          <h1 className="text-white font-serif font-bold text-xl drop-shadow-lg tracking-wide">
+          <h1
+            onClick={() => window.location.reload(true)}
+            className="text-white font-serif font-bold text-xl drop-shadow-lg tracking-wide"
+          >
             Lumina
           </h1>
 
@@ -148,7 +170,7 @@ export default function App() {
             </button>
 
             {/* Loading Indicator */}
-            {(loading || fetchingBatch) ? (
+            {loading || fetchingBatch ? (
               <div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin" />
             ) : (
               <div className="w-2 h-2 rounded-full bg-white/50 animate-pulse" />
@@ -174,14 +196,20 @@ export default function App() {
               <FeedCard
                 key={item.id}
                 data={item}
-                onOpenDrawer={(card) => { setActiveDrawerCard(card); setIsDrawerOpen(true); }}
+                onOpenDrawer={(card) => {
+                  setActiveDrawerCard(card);
+                  setIsDrawerOpen(true);
+                }}
               />
             ))
           )}
 
           {/* The Tripwire */}
           {!loading && !hasReachedEnd && (
-            <div ref={observerTarget} className="w-full h-32 flex-none flex items-center justify-center">
+            <div
+              ref={observerTarget}
+              className="w-full h-32 flex-none flex items-center justify-center"
+            >
               {fetchingBatch && (
                 <div className="w-8 h-8 border-4 border-zinc-800 border-t-zinc-500 rounded-full animate-spin" />
               )}
@@ -208,7 +236,11 @@ export default function App() {
           onClose={() => setIsStatsOpen(false)}
         />
 
-        <style dangerouslySetInnerHTML={{ __html: `.hide-scrollbar::-webkit-scrollbar { display: none; }` }} />
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `.hide-scrollbar::-webkit-scrollbar { display: none; }`,
+          }}
+        />
       </div>
     </div>
   );
