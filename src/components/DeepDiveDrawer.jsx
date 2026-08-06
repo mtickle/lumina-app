@@ -10,11 +10,6 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 /**
  * Renders a sliding drawer that displays deeper, long-form markdown content
  * associated with a specific feed card.
- *
- * @param {Object} props
- * @param {boolean} props.isOpen - Controls the visibility and translation of the drawer.
- * @param {Function} props.onClose - Callback function to close the drawer.
- * @param {Object} props.activeCard - The data object of the currently selected feed card.
  */
 const DeepDiveDrawer = ({ isOpen, onClose, activeCard }) => {
     const [content, setContent] = useState("");
@@ -25,8 +20,8 @@ const DeepDiveDrawer = ({ isOpen, onClose, activeCard }) => {
             if (!isOpen || !activeCard) return;
 
             // For PLACE, we currently just use the description if no formal deep dive exists
-            if (activeCard.card_type === 'PLACE' && !activeCard.payload.hasDeepDive) {
-                setContent(activeCard.payload.description);
+            if (activeCard.card_type === 'PLACE' && !activeCard.payload?.hasDeepDive) {
+                setContent(activeCard.payload.description || "Description unavailable.");
                 return;
             }
 
@@ -65,22 +60,18 @@ const DeepDiveDrawer = ({ isOpen, onClose, activeCard }) => {
 
             {/* Sliding Drawer */}
             <div
-                className={`absolute bottom-0 inset-x-0 h-[85dvh] bg-zinc-900 rounded-t-3xl shadow-2xl transition-transform duration-500 cubic-bezier(0.32, 0.72, 0, 1) flex flex-col ${isOpen ? "translate-y-0" : "translate-y-full"
+                className={`absolute bottom-0 inset-x-0 h-[85dvh] bg-zinc-950 rounded-t-3xl shadow-2xl transition-transform duration-500 ease-out flex flex-col border-t border-zinc-800 ${isOpen ? "translate-y-0" : "translate-y-full"
                     }`}
             >
                 {/* Drag Handle & Header */}
-                <div className="flex flex-col items-center p-4 border-b border-white/10 shrink-0">
-                    <div className="w-12 h-1.5 bg-white/20 rounded-full mb-4" />
+                <div className="flex flex-col items-center p-4 md:p-6 border-b border-zinc-800/50 shrink-0">
+                    <div className="w-12 h-1.5 bg-zinc-700 rounded-full mb-4" />
 
-                    {/* UPDATED: flex container uses items-start and gap-4 */}
                     <div className="flex w-full justify-between items-start gap-4">
-
-                        {/* UPDATED: removed truncate, added leading-tight */}
-                        <h2 className="text-white font-bold text-xl leading-tight">
-                            {activeCard?.metadata_anchor}
+                        <h2 className="text-white font-bold text-2xl leading-tight">
+                            {activeCard?.metadata_anchor || "Deep Dive"}
                         </h2>
 
-                        {/* UPDATED: added flex-shrink-0 */}
                         <button
                             onClick={onClose}
                             className="flex-shrink-0 p-2 bg-white/10 rounded-full text-white/70 hover:bg-white/20 transition-colors"
@@ -91,23 +82,28 @@ const DeepDiveDrawer = ({ isOpen, onClose, activeCard }) => {
                     </div>
                 </div>
 
-                {/* Content Area */}
-                <div className="flex-1 overflow-y-auto p-6 scroll-smooth">
-                    {loading ? (
-                        <div className="flex flex-col items-center justify-center h-full gap-4 text-zinc-500">
-                            <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                            <p>Loading reflection...</p>
-                        </div>
-                    ) : (
-                        <div className="prose prose-invert prose-zinc max-w-none text-zinc-300 leading-relaxed space-y-6">
-                            {/* Simple Markdown Parser Fallback */}
-                            {content.split('\n\n').map((paragraph, i) => (
-                                <p key={i} className="text-base">
-                                    {paragraph}
-                                </p>
-                            ))}
-                        </div>
-                    )}
+                {/* Content Area - flex-1 and overflow-y-auto create the locked scroll zone */}
+                <div className="flex-1 overflow-y-auto p-6 md:p-8 scroll-smooth hide-scrollbar">
+
+                    {/* Extra padding on bottom prevents text from sitting under the home bar */}
+                    <div className="pb-12 h-full">
+                        {loading ? (
+                            <div className="flex flex-col items-center justify-center h-full gap-4 text-zinc-500 pt-12">
+                                <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                                <p>Loading reflection...</p>
+                            </div>
+                        ) : (
+                            <div className="prose prose-invert prose-zinc max-w-none text-zinc-300 leading-relaxed space-y-6">
+                                {/* Simple Markdown Parser with larger mobile typography */}
+                                {content.split('\n\n').map((paragraph, i) => (
+                                    <p key={i} className="text-lg md:text-xl">
+                                        {paragraph}
+                                    </p>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
                 </div>
             </div>
         </div>
