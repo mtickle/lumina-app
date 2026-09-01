@@ -20,7 +20,7 @@ export default function App() {
 
   return (
     <div className="bg-black w-full h-[100dvh] fixed inset-0 font-sans sm:flex sm:justify-center overflow-hidden">
-      <div className="w-full h-full max-w-md bg-zinc-950 relative sm:border-x sm:border-zinc-800 shadow-2xl flex flex-col">
+      <div className="w-full h-full max-w-md md:max-w-2xl lg:max-w-4xl bg-zinc-950 relative sm:border-x sm:border-zinc-800 shadow-2xl flex flex-col">
 
         {/* Top Navigation Overlay */}
         <div className="absolute top-0 inset-x-0 z-30 p-6 pointer-events-none flex justify-between items-center bg-gradient-to-b from-black/60 to-transparent">
