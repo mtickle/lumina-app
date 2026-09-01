@@ -24,13 +24,11 @@ export function useFeedData(batchSize = 10) {
     const endRef = useRef(hasReachedEnd);
     const observer = useRef(null);
 
-    // Sync refs for the observer
     useEffect(() => {
         fetchingRef.current = fetchingBatch;
         endRef.current = hasReachedEnd;
     }, [fetchingBatch, hasReachedEnd]);
 
-    // Intersection Observer Callback
     const observerTarget = useCallback((node) => {
         if (observer.current) observer.current.disconnect();
         observer.current = new IntersectionObserver(
@@ -48,8 +46,9 @@ export function useFeedData(batchSize = 10) {
     useEffect(() => {
         const fetchMasterIndex = async () => {
             try {
+                // 1. Point the index fetch at the new view
                 const { data, error } = await supabase
-                    .from("feed_cards")
+                    .from("unified_feed")
                     .select("id, card_type")
                     .eq("active", true);
 
@@ -65,15 +64,34 @@ export function useFeedData(batchSize = 10) {
 
         fetchMasterIndex();
 
+        // 2. Keep subscription on the base table, but map incoming inserts to match the view
         const channel = supabase
             .channel("public:feed_cards")
             .on(
                 "postgres_changes",
                 { event: "INSERT", schema: "public", table: "feed_cards" },
-                (payload) => {
-                    setFeed((current) => [payload.new, ...current]);
+                (dbEvent) => {
+                    const raw = dbEvent.new;
+
+                    // On-the-fly normalization for real-time inserts
+                    const formattedInsert = {
+                        id: raw.id,
+                        card_type: raw.card_type,
+                        active: raw.active,
+                        payload: {
+                            title: raw.card_type === 'PERSON' ? raw.metadata_anchor.split(':')[0] : (raw.payload?.locationName || raw.metadata_anchor),
+                            locationName: raw.payload?.locationName || raw.metadata_anchor,
+                            description: raw.card_type === 'PERSON' ? raw.payload?.hookText : raw.payload?.description,
+                            imageUrl: raw.card_type === 'PERSON' ? raw.payload?.imageUrl : raw.payload?.bgUrl,
+                            mapImageUrl: raw.payload?.mapImageUrl || raw.payload?.imageUrl,
+                            imageKeyword: raw.payload?.imageKeyword,
+                            hasDeepDive: !!raw.payload?.hasDeepDive
+                        }
+                    };
+
+                    setFeed((current) => [formattedInsert, ...current]);
                     setMasterIndex((current) => [
-                        { id: payload.new.id, card_type: payload.new.card_type },
+                        { id: raw.id, card_type: raw.card_type },
                         ...current,
                     ]);
                 }
@@ -96,14 +114,37 @@ export function useFeedData(batchSize = 10) {
             setFetchingBatch(true);
             const batchIds = currentBatch.map((c) => c.id);
 
+            // 3. Point the batch loader at the new view
             const { data, error } = await supabase
-                .from("feed_cards")
+                .from("unified_feed")
                 .select("*")
                 .in("id", batchIds);
 
             if (data) {
+                // 4. Wrap the view's flat columns back into a `payload` object so the UI components remain completely untouched
+                const formattedData = data.map(row => ({
+                    id: row.id,
+                    card_type: row.card_type,
+                    active: row.active,
+                    payload: {
+                        // Unified Keys
+                        title: row.title,
+                        description: row.description,
+                        imageUrl: row.image_url,
+                        imageKeyword: row.image_keyword,
+                        hasDeepDive: row.has_deep_dive,
+
+                        // Legacy Fallback Keys (Prevents "Unknown" errors)
+                        locationName: row.title,
+                        name: row.title,
+                        hookText: row.description,
+                        mapImageUrl: row.image_url,
+                        bgUrl: row.image_url
+                    }
+                }));
+
                 const orderedData = batchIds
-                    .map((id) => data.find((d) => d.id === id))
+                    .map((id) => formattedData.find((d) => d.id === id))
                     .filter(Boolean);
                 setFeed((prev) => (page === 0 ? orderedData : [...prev, ...orderedData]));
             }

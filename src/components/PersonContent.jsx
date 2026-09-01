@@ -12,33 +12,14 @@ const resolveImage = (savedUrl, keyword) => {
     return getImageUrl(keyword);
 };
 
-// --- HELPER: Name Extractor ---
-// Attempts to grab consecutive capitalized words at the start of a sentence.
-const parseHookText = (text) => {
-    if (!text) return { name: 'Unknown Person', bio: 'Biography unavailable.' };
-
-    // Matches one or more capitalized words at the beginning of the string
-    const match = text.match(/^([A-Z][a-z'’-]*(\s+[A-Z][a-z'’-]*)*)/);
-
-    const extractedName = match && match[0] ? match[0] : 'Historical Figure';
-
-    return {
-        name: extractedName,
-        bio: text // We keep the full text so the sentence remains grammatically correct
-    };
-};
-
 const PersonContent = ({ payload, onOpenDeepDive }) => {
-    // Parse the legacy hookText on the fly
-    const { name, bio } = parseHookText(payload?.hookText);
-
     return (
         <div className="w-full h-full relative flex items-center justify-center p-6 md:p-12 bg-zinc-900">
 
             {/* Background Image */}
             <img
                 src={resolveImage(payload?.imageUrl, payload?.imageKeyword || 'portrait')}
-                alt={name}
+                alt={payload?.title || "Person"}
                 className="absolute inset-0 z-0 w-full h-full object-cover opacity-80"
             />
 
@@ -54,13 +35,13 @@ const PersonContent = ({ payload, onOpenDeepDive }) => {
                         <User className="text-sky-400 w-6 h-6 md:w-8 md:h-8" />
                     </div>
                     <h3 className="text-white text-xl md:text-3xl font-bold">
-                        {name}
+                        {payload?.title || 'Unknown Person'}
                     </h3>
                 </div>
 
                 {/* Bio/Description */}
                 <p className="text-zinc-300 text-sm md:text-lg leading-relaxed mb-6 line-clamp-4">
-                    {bio}
+                    {payload?.description || 'Biography unavailable.'}
                 </p>
 
                 {/* Conditional Deep Dive Button */}
