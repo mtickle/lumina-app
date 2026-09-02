@@ -24,6 +24,7 @@ const resolveImage = (savedUrl, keyword) => {
  * @param {string} props.textSizeClass - The class for dynamically setting the text size.
  */
 const InspirationalContent = ({ payload, onOpenDeepDive, textSizeClass }) => {
+    console.log('InspirationalContent payload:', payload);
     return (
         <div className="w-full h-full relative flex items-center justify-center p-8">
             {/* Background Image */}
