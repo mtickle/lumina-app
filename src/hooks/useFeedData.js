@@ -49,7 +49,7 @@ export function useFeedData(batchSize = 10) {
                 // Pointing at the base table instead of the view avoids the 400 error,
                 // since feed_cards natively has the is_approved column.
                 const { data, error } = await supabase
-                    .from("feed_cards") // <-- Changed this from "unified_feed"
+                    .from("feed_cards")
                     .select("id, card_type")
                     .eq("active", true)
                     .eq("is_approved", true);
@@ -100,7 +100,8 @@ export function useFeedData(batchSize = 10) {
                                 imageUrl: raw.card_type === 'PERSON' ? raw.payload?.imageUrl : raw.payload?.bgUrl,
                                 mapImageUrl: raw.payload?.mapImageUrl || raw.payload?.imageUrl,
                                 imageKeyword: raw.payload?.imageKeyword,
-                                hasDeepDive: !!raw.payload?.hasDeepDive
+                                hasDeepDive: !!raw.payload?.hasDeepDive,
+                                dateContext: raw.payload?.dateContext // Passed through for real-time injections
                             }
                         };
 
@@ -114,7 +115,7 @@ export function useFeedData(batchSize = 10) {
         return () => supabase.removeChannel(channel);
     }, []);
 
-    // Batch Loader (Unchanged)
+    // Batch Loader 
     useEffect(() => {
         const loadBatch = async () => {
             if (masterIndex.length === 0) return;
@@ -143,6 +144,7 @@ export function useFeedData(batchSize = 10) {
                         imageUrl: row.image_url,
                         imageKeyword: row.image_keyword,
                         hasDeepDive: row.has_deep_dive,
+                        dateContext: row.date_context, // Hydrated from the updated unified_feed view
                         locationName: row.title,
                         name: row.title,
                         hookText: row.description,

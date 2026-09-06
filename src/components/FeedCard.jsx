@@ -8,6 +8,7 @@ import InspirationalContent from "./InspirationalContent";
 import PersonContent from "./PersonContent";
 import PlaceContent from "./PlaceContent";
 import VerseContent from "./VerseContent";
+import EventContent from "./EventContent"; // <-- 1. Import the new component
 
 /**
  * Renders the main wrapper for a feed item, handling the overlay UI (likes, saves, metadata)
@@ -52,6 +53,8 @@ const FeedCard = ({ data, onOpenDrawer }) => {
                 return <PersonContent payload={data.payload} onOpenDeepDive={handleOpenDeepDive} />;
             case 'PLACE':
                 return <PlaceContent payload={data.payload} onOpenDeepDive={handleOpenDeepDive} />;
+            case 'EVENT': // <-- 2. Add the case for EVENT
+                return <EventContent payload={data.payload} onOpenDeepDive={handleOpenDeepDive} />;
             case 'INSPIRATIONAL':
                 return <InspirationalContent payload={data.payload} onOpenDeepDive={handleOpenDeepDive} textSizeClass={dynamicTextClass} />;
             case 'DOCTRINE':
@@ -66,8 +69,6 @@ const FeedCard = ({ data, onOpenDrawer }) => {
                 );
         }
     };
-
-
 
     return (
         <div className="relative h-full w-full flex-none snap-start snap-always overflow-hidden bg-black">
