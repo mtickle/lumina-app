@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { BarChart2 } from "lucide-react";
+import { BarChart2, ShieldCheck, ScrollText } from "lucide-react";
 import { useFeedData } from "./hooks/useFeedData";
 
 import FeedList from "./components/FeedList";
 import DeepDiveDrawer from "./components/DeepDiveDrawer";
 import StatsModal from "./components/StatsModal";
+import ConstitutionModal from "./components/ConstitutionModal"; // Import the new modal component
 
 export default function App() {
   const { feed, loading, fetchingBatch, error, hasReachedEnd, observerTarget } = useFeedData(10);
@@ -12,6 +13,7 @@ export default function App() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [activeDrawerCard, setActiveDrawerCard] = useState(null);
   const [isStatsOpen, setIsStatsOpen] = useState(false);
+  const [isConstitutionOpen, setIsConstitutionOpen] = useState(false); // <-- New state
 
   const handleOpenDrawer = (card) => {
     setActiveDrawerCard(card);
@@ -32,6 +34,24 @@ export default function App() {
           </h1>
 
           <div className="flex items-center gap-4 pointer-events-auto">
+
+            {/* Replaced <a> with <button> to trigger the modal */}
+            <button
+              onClick={() => setIsConstitutionOpen(true)}
+              title="Doctrinal Constitution"
+              className="p-2 bg-black/20 rounded-full hover:bg-black/40 backdrop-blur-md transition-colors border border-white/10 text-white/80"
+            >
+              <ScrollText size={18} />
+            </button>
+
+            <a
+              href="https://mtickle.github.io/lumina-admin/"
+              title="Admin Access"
+              className="p-2 bg-black/20 rounded-full hover:bg-black/40 backdrop-blur-md transition-colors border border-white/10 text-white/80"
+            >
+              <ShieldCheck size={18} />
+            </a>
+
             <button
               onClick={() => setIsStatsOpen(true)}
               className="p-2 bg-black/20 rounded-full hover:bg-black/40 backdrop-blur-md transition-colors border border-white/10 text-white/80"
@@ -68,6 +88,12 @@ export default function App() {
         <StatsModal
           isOpen={isStatsOpen}
           onClose={() => setIsStatsOpen(false)}
+        />
+
+        {/* New Constitution Modal */}
+        <ConstitutionModal
+          isOpen={isConstitutionOpen}
+          onClose={() => setIsConstitutionOpen(false)}
         />
 
       </div>
