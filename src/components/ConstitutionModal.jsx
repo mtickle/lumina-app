@@ -44,7 +44,15 @@ export default function ConstitutionModal({ isOpen, onClose }) {
             {/* Scrollable Content Area */}
             <div className="flex-1 overflow-y-auto p-6 pb-24 text-white">
                 <article className="prose prose-invert prose-sky max-w-none prose-headings:font-bold prose-h1:text-2xl prose-h2:text-lg prose-h2:mt-6 prose-h2:mb-3 prose-a:text-sky-400 prose-li:text-zinc-300 prose-p:text-zinc-300 leading-relaxed">
-                    <ReactMarkdown>
+                    <ReactMarkdown
+                        components={{
+                            h1: ({ node, ...props }) => <h1 className="text-3xl font-bold text-white mb-6" {...props} />,
+                            h2: ({ node, ...props }) => <h2 className="text-xl font-bold text-sky-400 mt-8 mb-4 uppercase tracking-wide" {...props} />,
+                            p: ({ node, ...props }) => <p className="text-zinc-300 leading-relaxed mb-4" {...props} />,
+                            ul: ({ node, ...props }) => <ul className="list-disc list-outside ml-5 mb-6 text-zinc-300 space-y-2" {...props} />,
+                            li: ({ node, ...props }) => <li className="pl-2" {...props} />,
+                            strong: ({ node, ...props }) => <strong className="text-white font-bold" {...props} />
+                        }}>
                         {constitutionText}
                     </ReactMarkdown>
                 </article>
