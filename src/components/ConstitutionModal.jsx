@@ -4,7 +4,7 @@ import { X } from 'lucide-react';
 const constitutionText = `
 ## The Lumina Doctrinal and Algorithmic Constitution
 
-This public document defines the rigid theological parameters and technical boundaries governing the artificial intelligence engine powering Lumina.
+This public document defines the rigid theological parameters and technical boundaries governing the artificial intelligence engine, in this case Google Gemini, powering Lumina.
 
 ## I. Core Theological Baseline
 
@@ -51,7 +51,11 @@ export default function ConstitutionModal({ isOpen, onClose }) {
                             p: ({ node, ...props }) => <p className="text-zinc-300 leading-relaxed mb-4" {...props} />,
                             ul: ({ node, ...props }) => <ul className="list-disc list-outside ml-5 mb-6 text-zinc-300 space-y-2" {...props} />,
                             li: ({ node, ...props }) => <li className="pl-2" {...props} />,
-                            strong: ({ node, ...props }) => <strong className="text-white font-bold" {...props} />
+                            strong: ({ node, ...props }) => <strong className="text-white font-bold" {...props} />,
+                            pre: ({ node, ...props }) => <pre className="bg-black/30 p-4 rounded-xl overflow-x-auto border border-white/10 my-6 text-sm font-mono text-zinc-300" {...props} />,
+                            code: ({ node, inline, ...props }) => inline
+                                ? <code className="bg-white/10 px-1.5 py-0.5 rounded text-sky-300 font-mono text-sm" {...props} />
+                                : <code className="font-mono text-sky-200" {...props} />
                         }}>
                         {constitutionText}
                     </ReactMarkdown>
