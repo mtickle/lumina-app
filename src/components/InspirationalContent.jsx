@@ -47,7 +47,7 @@ const InspirationalContent = ({ payload, onOpenDeepDive, textSizeClass = "text-x
                     <div className="p-2 bg-emerald-500/20 rounded-full">
                         <Quote className="text-emerald-400 w-6 h-6 md:w-8 md:h-8" />
                     </div>
-                    <h3 className="text-white text-xl md:text-3xl font-bold uppercase tracking-wide">
+                    <h3 className="text-white text-xl md:text-3xl font-bold tracking-wide">
                         {payload?.title || 'Devotional'}
                     </h3>
                 </div>

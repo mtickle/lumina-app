@@ -89,21 +89,21 @@ const FeedCard = ({ data, onOpenDrawer }) => {
                     paddingBottom: 'max(2rem, env(safe-area-inset-bottom))'
                 }}
             >
-                <div className="flex justify-between items-end px-4 w-full">
+                <div className="flex items-end px-4 w-full">
 
                     {/* Metadata Anchor (Bottom Left) */}
-                    <div className="flex-1 pr-16 mb-4">
+                    {/* <div className="flex-1 pr-16 mb-4">
                         <h3 className="text-white/80 text-xs font-bold uppercase tracking-wider mb-1 drop-shadow-lg">
                             {data.card_type}
                         </h3>
                         <h2 className="text-white text-lg font-medium drop-shadow-lg truncate">
                             {data.metadata_anchor}
                         </h2>
-                    </div>
+                    </div> */}
 
 
-                    {/* Action Column (Right Edge) */}
-                    <div className="flex flex-col gap-6 items-center pointer-events-auto pb-4">
+                    {/* Action Column (Right Edge) - Added ml-auto here */}
+                    <div className="ml-auto flex flex-col gap-2 items-center pointer-events-auto pb-4">
                         <button
                             onClick={() => setIsLiked(!isLiked)}
                             className="group flex flex-col items-center gap-1 transition-transform active:scale-90"
@@ -111,7 +111,7 @@ const FeedCard = ({ data, onOpenDrawer }) => {
                         >
                             <div className="p-3 bg-black/20 backdrop-blur-md rounded-full border border-white/10 group-hover:bg-white/20">
                                 <Heart
-                                    size={28}
+                                    size={20}
                                     className={`transition-colors ${isLiked ? "fill-red-500 text-red-500" : "text-white"
                                         }`}
                                 />
@@ -125,7 +125,7 @@ const FeedCard = ({ data, onOpenDrawer }) => {
                         >
                             <div className="p-3 bg-black/20 backdrop-blur-md rounded-full border border-white/10 group-hover:bg-white/20">
                                 <Bookmark
-                                    size={28}
+                                    size={20}
                                     className={`transition-colors ${isSaved ? "fill-amber-400 text-amber-400" : "text-white"
                                         }`}
                                 />
@@ -137,7 +137,7 @@ const FeedCard = ({ data, onOpenDrawer }) => {
                             aria-label="Share"
                         >
                             <div className="p-3 bg-black/20 backdrop-blur-md rounded-full border border-white/10 group-hover:bg-white/20">
-                                <Share2 size={28} className="text-white" />
+                                <Share2 size={20} className="text-white" />
                             </div>
                         </button>
                     </div>

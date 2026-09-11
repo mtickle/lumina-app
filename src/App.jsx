@@ -85,6 +85,7 @@ export default function App() {
           activeCard={activeDrawerCard}
         />
 
+        {/* Opens a page for stats about the different types of cards. */}
         <StatsModal
           isOpen={isStatsOpen}
           onClose={() => setIsStatsOpen(false)}
